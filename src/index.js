@@ -12,15 +12,17 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <React.StrictMode>
-    <Auth0Provider
-      domain={domain}
-      clientId={clientId}
-      redirectUri={window.location.origin}
-      audience="https://dev-pkl4wcxhgtnz6ug6.us.auth0.com/api/v2/"
-      scope="read:current_user update:current_user_metadata"
-    >
-      <App />
-    </Auth0Provider>
+    <BrowserRouter>
+      <Auth0Provider
+        domain={domain}
+        clientId={clientId}
+        redirectUri={window.location.origin}
+        audience="https://dev-pkl4wcxhgtnz6ug6.us.auth0.com/api/v2/"
+        scope="read:current_user update:current_user_metadata"
+      >
+        <App />
+      </Auth0Provider>
+    </BrowserRouter>
   </React.StrictMode>
 );
 
