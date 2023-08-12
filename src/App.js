@@ -37,32 +37,13 @@ import {
 import "./App.css";
 import { ExternalLinkIcon, WarningIcon } from "@chakra-ui/icons";
 import Back from "./components/Back";
+import Navbar from "./components/Navbar";
 
 const App = () => {
   return (
     <ChakraProvider>
       <Box bg="#131316" w="100%" h="100vh">
-        <Box h="70px" borderBottom="1px solid white">
-          <Box px="24px" py="16px" marginLeft="80px" marginRight="80px">
-            <HStack display="flex" justifyContent="space-between">
-              <Box>
-                <Text as="b" fontSize="3xl" color="white">
-                  Eventify
-                </Text>
-              </Box>
-
-              <Link
-                href="https://chakra-ui.com"
-                isExternal
-                color="white"
-                // marginLeft="1090px"
-              >
-                Coming Events <ExternalLinkIcon mx="12px" />
-              </Link>
-            </HStack>
-            <Back />
-          </Box>
-        </Box>
+      <Navbar />
         {/* <Box bg="red">
           <Text>Sign In to Grafbase</Text>
         </Box> */}
