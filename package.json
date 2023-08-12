@@ -13,6 +13,7 @@
     "@testing-library/user-event": "^13.5.0",
     "appwrite": "^11.0.0",
     "axios": "^1.4.0",
+    "cloudinary-react": "^1.8.1",
     "dotenv": "^16.0.3",
     "framer-motion": "^10.11.6",
     "openai": "^3.2.1",
