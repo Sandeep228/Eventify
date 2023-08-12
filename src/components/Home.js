@@ -7,6 +7,7 @@ import { Box, Text, HStack, Link, Button } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import Back from "./Back";
 import { useNavigate } from "react-router-dom";
+import LoginButton from "./Login";
 
 const Home = () => {
   // const { isAuthenticated } = useAuth0();
@@ -15,6 +16,9 @@ const Home = () => {
   const handleEvents = () => {
     navigate("/event");
   };
+  const createEvents = ()=>{
+    navigate("/addevent");
+  }
 
   return (
     <Box bg="#131316" w="100%" h="100vh">
@@ -27,6 +31,7 @@ const Home = () => {
               </Text>
             </Box>
             <Button onClick={handleEvents}>Coming Events</Button>
+            <Button onClick={createEvents}>Create Event</Button>
           </HStack>
           <Back />
         </Box>

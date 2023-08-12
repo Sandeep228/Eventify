@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import Event from "../src/components/Event";
 import Home from "../src/components/Home";
+import AddEvent from "./components/AddEvent";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/event" element={<Event />} />
+        <Route path="/addevent" element={<AddEvent />} />
         <Route />
       </Routes>
     </ChakraProvider>
