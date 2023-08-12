@@ -13,6 +13,12 @@ import {
 } from "@chakra-ui/react";
 import { v4 as uuidv4 } from "uuid";
 import { CloudinaryContext, Image } from "cloudinary-react";
+import { Configuration, OpenAIApi } from 'openai';
+
+const configuration = new Configuration({
+  apiKey: "YOUR-API_KEY",
+});
+const openai = new OpenAIApi(configuration);
 
 const themes = [
   { value: "theme1", label: "Theme 1" },
@@ -60,6 +66,26 @@ function Form() {
   //       handleInputChange('image', imageUrl);
   //     }
   //   };
+  const [isGenerating, setIsGenerating] = useState(false);
+  const generateDescriptionWithAI = async () => {
+    setIsGenerating(true);
+    try {
+      const prompt= `Generate a description for an event named ${formData.eventName}`
+      // const response = await openai.createChatCompletion({
+      //   model: "gpt-3.5-turbo",
+      //   messages: [{ role: "user", content: prompt }],
+      //   max_tokens: 100, // Adjust as needed
+      // });
+      //const description = response.choices[0].text;
+      const description = "dummy ses"
+      handleInputChange('description', description);
+    } catch (error) {
+      console.error('Error generating description:', error);
+    }
+    finally {
+      setIsGenerating(false);
+    }
+  };
   const handleImageChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -88,6 +114,7 @@ function Form() {
   };
   const handleSubmit = (event) => {
     event.preventDefault();
+    console.log(formData)
   };
   const handleDateTimeChange = (e) => {
     const inputDate = e.target.value;
@@ -113,6 +140,14 @@ function Form() {
               onChange={(e) => handleInputChange("description", e.target.value)}
             />
           </FormControl>
+          <Button
+            type="button"
+            onClick={generateDescriptionWithAI}
+            colorScheme="blue"
+            disabled={isGenerating}
+          >
+            {isGenerating ? 'Generating...' : 'Auto-generate description with AI'}
+          </Button>
           <FormControl mb={4}>
             <FormLabel>Theme</FormLabel>
             <Select
