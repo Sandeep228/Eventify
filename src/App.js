@@ -4,6 +4,7 @@ import Event from "./components/Event";
 import Home from "../src/components/Home";
 import Dashboard from "./components/Dashboard";
 import Form from "./components/Form";
+import MyEvents from "./components/MyEvents";
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
         <Route path="/event" element={<Event />} />
         <Route path="/profile" element={<Dashboard />} />
         <Route path="/form" element={<Form />} />
-
+        <Route path="/myevents" element={<MyEvents />} />
         <Route />
       </Routes>
     </ChakraProvider>

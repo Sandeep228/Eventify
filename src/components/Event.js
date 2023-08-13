@@ -52,7 +52,6 @@ function Event() {
   console.log(data?.data?.eventCollection);
 
   useEffect(() => {
-    console.log("sdsd");
     fetchData();
   }, []);
 
@@ -91,9 +90,7 @@ function Event() {
                   Published AT:{node.createdAt}
                   Evevnt Date: {node.eventDate}
                   theme: {node.theme}
-                  {node.host.name && {
-                      
-                  }}
+                  Name: {node?.host?.name}
                   <p>-------</p>
                 </Text>
               ))}

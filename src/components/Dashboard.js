@@ -30,6 +30,12 @@ function Dashboard() {
     });
   };
 
+  const getMyEvents = () =>{
+    navigate("/myevents",{
+      replace: true,
+    })
+  }
+
   const GetUserQuery = `
   query User($email: Email!) {
     user(by: {email:$email }) {
@@ -182,6 +188,7 @@ function Dashboard() {
               Services
             </Link>
             <Button onClick={handleopen}>Add Event</Button>
+            <Button onClick={getMyEvents}>My Events</Button>
           </Stack>
         </Box>
         <Flex direction="column" w="90%" p={4} bg="red.100">

@@ -76,7 +76,7 @@ function Form() {
       const response = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         messages: [{ role: "user", content: prompt }],
-        max_tokens: 1000, // Adjust as needed
+        max_tokens: 500, // Adjust as needed
       });
 
       const description = response.data.choices[0].message.content;
