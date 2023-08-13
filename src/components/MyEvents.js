@@ -24,6 +24,7 @@ const MyEvents = () => {
                 createdAt
                 eventUrl
                 eventDate
+                venue
                 theme
               }
             }
@@ -108,6 +109,7 @@ const MyEvents = () => {
              Evevnt Date: {node.eventDate}
              theme: {node.theme}
              eventUrl: {node.eventUrl}
+             venue: {node.venue}
              <Button onClick={() => handleEventID(node.id)}>Delete</Button>
            </Text>
          ))}

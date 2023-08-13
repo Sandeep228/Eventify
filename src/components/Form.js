@@ -41,6 +41,7 @@ function Form() {
     description: "",
     theme: "",
     eventDate: "",
+    venue:"",
     image: null,
   });
   const [isUploading, setIsUploading] = useState(false);
@@ -179,6 +180,7 @@ function Form() {
     const theme = formData.theme;
     const eventDate = formData.eventDate;
     const eventUrl = formData.image;
+    const venue = formData.venue;
     const publishedAt = dateFormatter(Date.now())
     const userID = await getUserByEmailID(email);
     
@@ -201,6 +203,7 @@ function Form() {
             publishedAt: publishedAt,
             theme: theme,
             eventUrl: eventUrl,
+            venue: venue,
             host: userID
           },
         }),
@@ -225,6 +228,7 @@ function Form() {
       description: "",
       theme: "",
       eventDate: "",
+      venue:"",
       image: null,
     });
   };
@@ -275,6 +279,14 @@ function Form() {
                 </option>
               ))}
             </Select>
+          </FormControl>
+          <FormControl mb={4}>
+            <FormLabel>Event Venue</FormLabel>
+            <Input
+              type="text"
+              value={formData.venue}
+              onChange={(e) => handleInputChange("venue", e.target.value)}
+            />
           </FormControl>
           <FormControl mb={4}>
             <FormLabel>Event Date</FormLabel>

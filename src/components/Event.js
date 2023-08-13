@@ -19,6 +19,7 @@ function Event() {
             createdAt
             eventUrl
             eventDate
+            venue
             host{
               name
             }
@@ -93,6 +94,7 @@ function Event() {
                   theme: {node.theme}
                   Name: {node?.host?.name}
                   eventUrl: {node.eventUrl}
+                  venue: {node.venue}
                   <p>-------</p>
                 </Text>
               ))}
