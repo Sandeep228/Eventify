@@ -21,7 +21,8 @@ const MyEvents = () => {
                 id
                 name
                 description
-                publishedAt
+                createdAt
+                eventUrl
                 eventDate
                 theme
               }
@@ -106,6 +107,7 @@ const MyEvents = () => {
              Published AT:{node.createdAt}
              Evevnt Date: {node.eventDate}
              theme: {node.theme}
+             eventUrl: {node.eventUrl}
              <Button onClick={() => handleEventID(node.id)}>Delete</Button>
            </Text>
          ))}

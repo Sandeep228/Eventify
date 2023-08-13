@@ -16,7 +16,8 @@ function Event() {
             name
             theme
             description
-            publishedAt
+            createdAt
+            eventUrl
             eventDate
             host{
               name
@@ -91,6 +92,7 @@ function Event() {
                   Evevnt Date: {node.eventDate}
                   theme: {node.theme}
                   Name: {node?.host?.name}
+                  eventUrl: {node.eventUrl}
                   <p>-------</p>
                 </Text>
               ))}

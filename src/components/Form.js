@@ -72,7 +72,7 @@ function Form() {
   const generateDescriptionWithAI = async () => {
     setIsGenerating(true);
     try {
-      const prompt = `write a description for an event going to held on title ${formData.eventName}`;
+      const prompt = `write a paragraph about ${formData.eventName}`;
       const response = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         messages: [{ role: "user", content: prompt }],
@@ -124,8 +124,8 @@ function Form() {
 `;
   
   const EventCreate = `
-  mutation EventCreate($name: String! $description:String! $eventDate:DateTime $publishedAt:DateTime $theme:String $host:ID){
-    eventCreate(input: {name:$name description:$description eventDate:$eventDate publishedAt: $publishedAt theme:$theme host: {link:$host}}) {
+  mutation EventCreate($name: String! $description:String! $eventDate:DateTime $publishedAt:DateTime $theme:String $eventUrl:URL $host:ID){
+    eventCreate(input: {name:$name description:$description eventDate:$eventDate publishedAt: $publishedAt theme:$theme eventUrl:$eventUrl host: {link:$host}}) {
       event {
        id
       }
@@ -178,6 +178,7 @@ function Form() {
     const description = formData.description;
     const theme = formData.theme;
     const eventDate = formData.eventDate;
+    const eventUrl = formData.image;
     const publishedAt = dateFormatter(Date.now())
     const userID = await getUserByEmailID(email);
     
@@ -199,6 +200,7 @@ function Form() {
             eventDate: eventDate,
             publishedAt: publishedAt,
             theme: theme,
+            eventUrl: eventUrl,
             host: userID
           },
         }),
