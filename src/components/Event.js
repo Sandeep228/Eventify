@@ -14,8 +14,13 @@ function Event() {
           node {
             id
             name
+            theme
             description
-            createdAt
+            publishedAt
+            eventDate
+            host{
+              name
+            }
           }
         }
       }
@@ -81,7 +86,15 @@ function Event() {
             <Text>
               {data?.data?.eventCollection?.edges?.map(({ node }) => (
                 <Text color="red" key={node.id}>
-                  {node.name} - {node.description} - {node.createdAt}
+                  Event name: {node.name} 
+                  Event Description: {node.description} 
+                  Published AT:{node.createdAt}
+                  Evevnt Date: {node.eventDate}
+                  theme: {node.theme}
+                  {node.host.name && {
+                      
+                  }}
+                  <p>-------</p>
                 </Text>
               ))}
             </Text>
