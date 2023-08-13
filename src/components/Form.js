@@ -16,7 +16,7 @@ import { CloudinaryContext, Image } from "cloudinary-react";
 import { Configuration, OpenAIApi } from 'openai';
 
 const configuration = new Configuration({
-  apiKey: "YOUR-API_KEY",
+  apiKey: "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",
 });
 const openai = new OpenAIApi(configuration);
 
@@ -70,14 +70,15 @@ function Form() {
   const generateDescriptionWithAI = async () => {
     setIsGenerating(true);
     try {
-      const prompt= `Generate a description for an event named ${formData.eventName}`
-      // const response = await openai.createChatCompletion({
-      //   model: "gpt-3.5-turbo",
-      //   messages: [{ role: "user", content: prompt }],
-      //   max_tokens: 100, // Adjust as needed
-      // });
-      //const description = response.choices[0].text;
-      const description = "dummy ses"
+      const prompt= `write a description for an event going to held on title ${formData.eventName}`
+      const response = await openai.createChatCompletion({
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 100, // Adjust as needed
+      });
+
+      const description = response.data.choices[0].message.content;
+      //const description = "dummy ses"
       handleInputChange('description', description);
     } catch (error) {
       console.error('Error generating description:', error);
