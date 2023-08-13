@@ -13,17 +13,19 @@ import {
 } from "@chakra-ui/react";
 import { v4 as uuidv4 } from "uuid";
 import { CloudinaryContext, Image } from "cloudinary-react";
-import { Configuration, OpenAIApi } from 'openai';
+import { Configuration, OpenAIApi } from "openai";
 
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: "OPENAI_API",
 });
 const openai = new OpenAIApi(configuration);
 
 const themes = [
-  { value: "theme1", label: "Theme 1" },
-  { value: "theme2", label: "Theme 2" },
-  { value: "theme3", label: "Theme 3" },
+  { value: "Education", label: "Education" },
+  { value: "Environmet", label: "Environment" },
+  { value: "Technology", label: "Technology" },
+  { value: "StudentWelfare", label: "Student Welfare" },
+
 ];
 // Add your Cloudinary configuration here
 const cloudinaryConfig = {
@@ -70,20 +72,19 @@ function Form() {
   const generateDescriptionWithAI = async () => {
     setIsGenerating(true);
     try {
-      const prompt= `write a description for an event going to held on title ${formData.eventName}`
+      const prompt = `write a description for an event going to held on title ${formData.eventName}`;
       const response = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         messages: [{ role: "user", content: prompt }],
-        max_tokens: 100, // Adjust as needed
+        max_tokens: 1000, // Adjust as needed
       });
 
       const description = response.data.choices[0].message.content;
       //const description = "dummy ses"
-      handleInputChange('description', description);
+      handleInputChange("description", description);
     } catch (error) {
-      console.error('Error generating description:', error);
-    }
-    finally {
+      console.error("Error generating description:", error);
+    } finally {
       setIsGenerating(false);
     }
   };
@@ -113,9 +114,117 @@ function Form() {
       }
     }
   };
-  const handleSubmit = (event) => {
+
+  const GetUserQuery = `
+  query User($email: Email!) {
+    user(by: {email:$email }) {
+      id
+    }
+  }
+`;
+  
+  const EventCreate = `
+  mutation EventCreate($name: String! $description:String! $eventDate:DateTime $publishedAt:DateTime $theme:String $host:ID){
+    eventCreate(input: {name:$name description:$description eventDate:$eventDate publishedAt: $publishedAt theme:$theme host: {link:$host}}) {
+      event {
+       id
+      }
+    }
+  }
+  `;
+
+  const getUserByEmailID = async(email) => {
+    const response = await fetch(
+      "https://eventify-main-pujaagarwal5263.grafbase.app/graphql",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key":
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTE3NzcyNjYsImlzcyI6ImdyYWZiYXNlIiwiYXVkIjoiMDFIN0pXR1gwUjVNN0ZQUjkzV1pNQUtGMzgiLCJqdGkiOiIwMUg3SldHWDhRNVlWTVc1RkI0RDJFQ1dTUiIsImVudiI6InByb2R1Y3Rpb24iLCJwdXJwb3NlIjoicHJvamVjdC1hcGkta2V5In0.CnKts9fBm59UJw5enBJIgrXAIhLqvK_CGchRa--qw-Y",
+        },
+        body: JSON.stringify({
+          query: GetUserQuery,
+          variables: {
+            email: email,
+          },
+        }),
+      }
+
+    );
+
+    const result = await response.json();
+    return result.data?.user?.id;
+  }
+
+  const dateFormatter = (timestamp) => {
+    const date = new Date(timestamp);
+
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    const hours = String(date.getUTCHours()).padStart(2, "0");
+    const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+    const seconds = String(date.getUTCSeconds()).padStart(2, "0");
+    const milliseconds = String(date.getUTCMilliseconds()).padStart(3, "0");
+
+    const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
+
+    return formattedDate;
+  };
+
+  const postEventData = async (formdata, email) => {
+    const name = formData.eventName;
+    const description = formData.description;
+    const theme = formData.theme;
+    const eventDate = formData.eventDate;
+    const publishedAt = dateFormatter(Date.now())
+    const userID = await getUserByEmailID(email);
+    
+    console.log(name," ",description," ",theme," ",eventDate," ",publishedAt," ",userID)
+    const response = await fetch(
+      "https://eventify-main-pujaagarwal5263.grafbase.app/graphql",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key":
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTE3NzcyNjYsImlzcyI6ImdyYWZiYXNlIiwiYXVkIjoiMDFIN0pXR1gwUjVNN0ZQUjkzV1pNQUtGMzgiLCJqdGkiOiIwMUg3SldHWDhRNVlWTVc1RkI0RDJFQ1dTUiIsImVudiI6InByb2R1Y3Rpb24iLCJwdXJwb3NlIjoicHJvamVjdC1hcGkta2V5In0.CnKts9fBm59UJw5enBJIgrXAIhLqvK_CGchRa--qw-Y",
+        },
+        body: JSON.stringify({
+          query: EventCreate,
+          variables: {
+            name: name,
+            description: description,
+            eventDate: eventDate,
+            publishedAt: publishedAt,
+            theme: theme,
+            host: userID
+          },
+        }),
+      }
+    );
+
+    const result = await response.json();
+    if(result.data!=null){
+      console.log("event submitted successfully");
+    }else{
+      console.log("error in saving event");
+    }
+    return result;
+  };
+
+  const handleSubmit = async(event) => {
     event.preventDefault();
-    console.log(formData)
+    //push new event to grafbase
+    await postEventData(formData, user.email);
+    setFormData({
+      eventName: "",
+      description: "",
+      theme: "",
+      eventDate: "",
+      image: null,
+    });
   };
   const handleDateTimeChange = (e) => {
     const inputDate = e.target.value;
@@ -147,7 +256,9 @@ function Form() {
             colorScheme="blue"
             disabled={isGenerating}
           >
-            {isGenerating ? 'Generating...' : 'Auto-generate description with AI'}
+            {isGenerating
+              ? "Generating..."
+              : "Auto-generate description with AI"}
           </Button>
           <FormControl mb={4}>
             <FormLabel>Theme</FormLabel>

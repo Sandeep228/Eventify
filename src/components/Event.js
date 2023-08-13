@@ -4,6 +4,7 @@ import { Box, Text, HStack, Icon, Heading } from "@chakra-ui/react";
 import { SiEventstore, SiAkamai } from "react-icons/si";
 
 function Event() {
+  console.log("gf api",process.env.GRAFBASE_API)
   const [data, setData] = useState();
 
   const GetEventsQuery = `
@@ -27,8 +28,7 @@ function Event() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-api-key":
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTE3NzcyNjYsImlzcyI6ImdyYWZiYXNlIiwiYXVkIjoiMDFIN0pXR1gwUjVNN0ZQUjkzV1pNQUtGMzgiLCJqdGkiOiIwMUg3SldHWDhRNVlWTVc1RkI0RDJFQ1dTUiIsImVudiI6InByb2R1Y3Rpb24iLCJwdXJwb3NlIjoicHJvamVjdC1hcGkta2V5In0.CnKts9fBm59UJw5enBJIgrXAIhLqvK_CGchRa--qw-Y",
+          "x-api-key":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTE3NzcyNjYsImlzcyI6ImdyYWZiYXNlIiwiYXVkIjoiMDFIN0pXR1gwUjVNN0ZQUjkzV1pNQUtGMzgiLCJqdGkiOiIwMUg3SldHWDhRNVlWTVc1RkI0RDJFQ1dTUiIsImVudiI6InByb2R1Y3Rpb24iLCJwdXJwb3NlIjoicHJvamVjdC1hcGkta2V5In0.CnKts9fBm59UJw5enBJIgrXAIhLqvK_CGchRa--qw-Y",
         },
         body: JSON.stringify({
           query: GetEventsQuery,
@@ -40,6 +40,7 @@ function Event() {
     );
 
     const result = await response.json();
+    console.log(result)
     setData(result);
   };
 
