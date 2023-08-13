@@ -125,8 +125,8 @@ function Form() {
 `;
   
   const EventCreate = `
-  mutation EventCreate($name: String! $description:String! $eventDate:DateTime $publishedAt:DateTime $theme:String $eventUrl:URL $host:ID){
-    eventCreate(input: {name:$name description:$description eventDate:$eventDate publishedAt: $publishedAt theme:$theme eventUrl:$eventUrl host: {link:$host}}) {
+  mutation EventCreate($name: String! $description:String! $eventDate:DateTime $publishedAt:DateTime $theme:String $eventUrl:URL $venue:String $host:ID){
+    eventCreate(input: {name:$name description:$description eventDate:$eventDate publishedAt: $publishedAt theme:$theme eventUrl:$eventUrl venue: $venue host: {link:$host}}) {
       event {
        id
       }
