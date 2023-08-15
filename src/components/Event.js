@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Box, Text, HStack, Icon, Heading } from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  HStack,
+  Icon,
+  Heading,
+  Divider,
+  Flex,
+  Image,
+  Button,
+} from "@chakra-ui/react";
 
-import { SiEventstore, SiAkamai } from "react-icons/si";
+import { SiEventstore } from "react-icons/si";
 
 function Event() {
-  console.log("gf api",process.env.GRAFBASE_API)
   const [data, setData] = useState();
 
   const GetEventsQuery = `
@@ -35,7 +44,8 @@ function Event() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-api-key":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTE3NzcyNjYsImlzcyI6ImdyYWZiYXNlIiwiYXVkIjoiMDFIN0pXR1gwUjVNN0ZQUjkzV1pNQUtGMzgiLCJqdGkiOiIwMUg3SldHWDhRNVlWTVc1RkI0RDJFQ1dTUiIsImVudiI6InByb2R1Y3Rpb24iLCJwdXJwb3NlIjoicHJvamVjdC1hcGkta2V5In0.CnKts9fBm59UJw5enBJIgrXAIhLqvK_CGchRa--qw-Y",
+          "x-api-key":
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTE3NzcyNjYsImlzcyI6ImdyYWZiYXNlIiwiYXVkIjoiMDFIN0pXR1gwUjVNN0ZQUjkzV1pNQUtGMzgiLCJqdGkiOiIwMUg3SldHWDhRNVlWTVc1RkI0RDJFQ1dTUiIsImVudiI6InByb2R1Y3Rpb24iLCJwdXJwb3NlIjoicHJvamVjdC1hcGkta2V5In0.CnKts9fBm59UJw5enBJIgrXAIhLqvK_CGchRa--qw-Y",
         },
         body: JSON.stringify({
           query: GetEventsQuery,
@@ -47,7 +57,7 @@ function Event() {
     );
 
     const result = await response.json();
-    console.log(result)
+    console.log(result);
     setData(result);
   };
 
@@ -57,50 +67,74 @@ function Event() {
     fetchData();
   }, []);
 
+  const handleGoBack = () => {
+    window.history.back();
+  };
+
   return (
-    <Box
-      bg="#131316"
-      w="100%"
-      h="100vh"
-      background="linear-gradient(to right, #020304, #0e2626, #316149) "
-    >
-      <Box
-        h="70px"
-        borderBottom="1px solid #363739"
-        style={{ overflow: "hidden" }}
-      >
-        <Box px="24px" py="16px" marginLeft="80px" marginRight="80px">
-          <HStack display="flex" justifyContent="space-between">
-            <Box>
-              <Icon as={SiEventstore} h={6} w={6} color="white" mr="8px" />
-              <Text as="b" fontSize="3xl" color="white">
-                Eventify
-              </Text>
-            </Box>
-          </HStack>
-        </Box>
-      </Box>
-      <Box color="white">
-        <Heading>Event</Heading>
-        <Text color="grey.300">
-          {data && (
-            <Text>
-              {data?.data?.eventCollection?.edges?.map(({ node }) => (
-                <Text color="red" key={node.id}>
-                  Event name: {node.name} 
-                  Event Description: {node.description} 
-                  Published AT:{node.createdAt}
-                  Evevnt Date: {node.eventDate}
-                  theme: {node.theme}
-                  Name: {node?.host?.name}
-                  eventUrl: {node.eventUrl}
-                  venue: {node.venue}
-                  <p>-------</p>
-                </Text>
-              ))}
+    <Box bg="black!important">
+      <Box px="24px" py="16px" bg="#0e2323">
+        <HStack display="flex" justifyContent="space-between" position="sticky">
+          <Box>
+            <Icon as={SiEventstore} h={6} w={6} color="white" mr="8px" />
+            <Text as="b" fontSize="2xl" color="white">
+              Eventify
             </Text>
+          </Box>
+          <Button onClick={handleGoBack}> Back to Home</Button>
+        </HStack>
+      </Box>
+      <Box pl={100} bg="black">
+        <Heading color="white" mt={2} mb={1} ml={490}>
+          All UpComing Events
+        </Heading>
+        <Divider ml={490} w={360} />
+        <Flex flexWrap="wrap">
+          {data && (
+            <>
+              {data?.data?.eventCollection?.edges?.map(({ node }) => (
+                <Box
+                  background="linear-gradient(to right,  #0e2626, #316149) "
+                  key={node.id}
+                  borderRadius="lg"
+                  p={4}
+                  m={2}
+                  color="white"
+                  width={{ base: "100%", sm: "45%", md: "30%" }}
+                >
+                  <Image
+                    src={node.eventUrl}
+                    alt="Event"
+                    mb={2}
+                    h={300}
+                    w={379}
+                  />
+                  <Heading size="md" mb={2}>
+                    {node.name}
+                  </Heading>
+                  <Text>
+                    Host name: <b>{node?.host?.name}</b>
+                  </Text>
+                  <Text mb={1}>
+                    Description:<b>{node.description}</b>
+                  </Text>
+                  <Text mb={1}>
+                    Theme: <b>{node.theme}</b>
+                  </Text>
+                  <Text mb={1}>
+                    Venue: <b>{node.venue}</b>
+                  </Text>
+                  <Text mb={1}>
+                    Event Date: <b>{node.eventDate}</b>
+                  </Text>
+                  <Text mb={1}>
+                    Published AT: <b>{node.createdAt}</b>
+                  </Text>
+                </Box>
+              ))}
+            </>
           )}
-        </Text>
+        </Flex>
       </Box>
     </Box>
   );

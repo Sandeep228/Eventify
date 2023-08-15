@@ -13,7 +13,6 @@ import {
   HStack,
   Flex,
   Icon,
-  Center,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -40,6 +39,10 @@ const MyEvents = () => {
   useEffect(() => {
     fetchData();
   }, [isAuthenticated, user]);
+
+  const handleGoBack = () => {
+    window.history.back();
+  };
 
   const GetEventsQuery = `
   query User($first: Int! $email:Email!) {
@@ -92,7 +95,6 @@ const MyEvents = () => {
     );
 
     const result = await response.json();
-    console.log("all data fetched---", result);
     setData(result);
   };
 
@@ -117,7 +119,6 @@ const MyEvents = () => {
 
     const result = await response.json();
     if (result?.data?.eventDelete?.deletedId) {
-      console.log("deleted ", result);
     } else {
       console.log("could not delete");
     }
@@ -151,8 +152,6 @@ const MyEvents = () => {
   `;
 
   const saveEditedEvent = async () => {
-    // Update event on server using editedEvent data
-    // Perform the GraphQL mutation to update the event here
     const response = await fetch(
       "https://eventify-main-pujaagarwal5263.grafbase.app/graphql",
       {
@@ -178,14 +177,12 @@ const MyEvents = () => {
     const result = await response.json();
     if (result.data != null) {
       console.log("event submitted successfully");
-      // Close the modal and refresh the data
       setIsEditModalOpen(false);
       fetchData();
     } else {
       console.log("error in saving event");
     }
   };
-  console.log(data);
 
   return (
     <Box bg="black!important">
@@ -197,6 +194,7 @@ const MyEvents = () => {
               Eventify
             </Text>
           </Box>
+          <Button onClick={handleGoBack}> Back to Home</Button>
         </HStack>
       </Box>
       <Box pl={100} bg="black">
@@ -227,10 +225,10 @@ const MyEvents = () => {
                   <Heading size="md" mb={2}>
                     {node.name}
                   </Heading>
-                  <Text mb={2}>{node.description}</Text>
+                  <Text mb={2}> Description:{node.description}</Text>
                   <Text mb={1}>Event Date: {node.eventDate}</Text>
                   <Text mb={1}>Theme: {node.theme}</Text>
-                  <Text mb={1}>Location: {node.venue}</Text>
+                  <Text mb={1}>Venue: {node.venue}</Text>
                   <Button onClick={() => editEventID(node.id)} mr={4}>
                     Edit
                   </Button>

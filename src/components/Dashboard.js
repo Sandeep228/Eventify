@@ -3,16 +3,18 @@ import {
   Box,
   Text,
   HStack,
-  Link,
   Icon,
   Button,
-  Divider,
   Flex,
   Stack,
+  Heading,
 } from "@chakra-ui/react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
-import { SiEventstore, SiAkamai, SiUnderscoredotjs } from "react-icons/si";
+import { SiEventstore, SiAkamai } from "react-icons/si";
+import { TbTimelineEventPlus } from "react-icons/tb";
+import { BsCalendar2EventFill } from "react-icons/bs";
+
 import User from "./User";
 
 function Dashboard() {
@@ -109,7 +111,6 @@ function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       if (isAuthenticated && user !== undefined) {
-        // Perform your actions here
         console.log("User is authenticated:", user);
         const hasUsers = await getUserByEmailID(user.email);
         console.log("has users --", hasUsers);
@@ -141,53 +142,50 @@ function Dashboard() {
                 Eventify
               </Text>
             </Box>
-            <Button rightIcon={<Icon as={SiAkamai} />} onClick={handleEvents}>
-              Coming Events
-            </Button>
             <Button onClick={() => logout()}> Logout</Button>
           </HStack>
         </Box>
       </Box>
       <Flex>
-        <Box w="20%" h="110vh" p={71} bg="gray.900">
-          <Stack spacing={7}>
-            <Link
-              href="#"
-              //  onClick={handleClick}
-              color="#316149"
-              fontWeight="bold"
-              _hover={{ textDecoration: "none" }}
-              _focus={{ outline: "none" }}
-              as="a"
-              _notLast={{ mb: 2 }}
+        <Box
+          w="20%"
+          h="110vh"
+          p={71}
+          bg="gray.900"
+          sx={{
+            background: `
+      linear-gradient(to bottom, rgba(49, 97, 73, 1) 0%, rgba(19, 19, 22, 1) 100%),
+      radial-gradient(circle, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 70%)
+    `,
+          }}
+        >
+          <Stack spacing={7} mt={66}>
+            <Box>
+              <Heading size="xl" mb={2} color="white">
+                Eventify
+              </Heading>
+              <Text color="white" fontSize={29}>
+                Where AI shapes <br />
+                events at your command
+              </Text>
+            </Box>
+
+            <Button
+              rightIcon={<Icon as={TbTimelineEventPlus} />}
+              onClick={handleopen}
             >
-              About Us
-            </Link>
-            <Link
-              href="#"
-              // onClick={handleClick1}
-              color="#316149"
-              fontWeight="bold"
-              _hover={{ textDecoration: "none" }}
-              _focus={{ outline: "none" }}
-              as="a"
-              _notLast={{ mb: 2 }}
+              Add Event
+            </Button>
+
+            <Button
+              rightIcon={<Icon as={BsCalendar2EventFill} />}
+              onClick={getMyEvents}
             >
-              Contacts
-            </Link>
-            <Link
-              href="#"
-              color="#306048"
-              fontWeight="bold"
-              _hover={{ textDecoration: "none" }}
-              _focus={{ outline: "none" }}
-              as="a"
-              _notLast={{ mb: 2 }}
-            >
-              Services
-            </Link>
-            <Button onClick={handleopen}>Add Event</Button>
-            <Button onClick={getMyEvents}>My Events</Button>
+              My Events
+            </Button>
+            <Button rightIcon={<Icon as={SiAkamai} />} onClick={handleEvents}>
+              Coming Events
+            </Button>
           </Stack>
         </Box>
         <Flex direction="column" w="90%" p={4} bg="black">

@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-
 import {
-  ChakraProvider,
   Box,
   FormControl,
   FormLabel,
@@ -12,16 +10,12 @@ import {
   Button,
   Flex,
   Stack,
-  Link,
   Text,
   Icon,
   Heading,
-  VStack,
 } from "@chakra-ui/react";
-import { v4 as uuidv4 } from "uuid";
-import { CloudinaryContext, Image } from "cloudinary-react";
+import { Image } from "cloudinary-react";
 import { Configuration, OpenAIApi } from "openai";
-import User from "./User";
 import { SiEventstore } from "react-icons/si";
 import { useToast } from "@chakra-ui/react";
 
@@ -43,7 +37,7 @@ const cloudinaryConfig = {
   apiSecret: "UFUbj4CcHCbBniV8VrDYv6-Q1sI",
 };
 function Form() {
-  const { user, isAuthenticated, isLoading } = useAuth0();
+  const { user } = useAuth0();
 
   const [formData, setFormData] = useState({
     eventName: "",
@@ -62,22 +56,7 @@ function Form() {
     }));
   };
   console.log(user);
-  //   const handleImageChange = async (event) => {
-  //     const file = event.target.files[0];
-  //     if (file) {
-  //       // Upload image to Cloudinary
-  //       const formData = new FormData();
-  //       formData.append('file', file);
-  //       formData.append('upload_preset', 'react_test'); // Set your Cloudinary upload preset
-  //       const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/image/upload`, {
-  //         method: 'POST',
-  //         body: formData,
-  //       });
-  //       const data = await response.json();
-  //       const imageUrl = data.secure_url;
-  //       handleInputChange('image', imageUrl);
-  //     }
-  //   };
+
   const [isGenerating, setIsGenerating] = useState(false);
   const generateDescriptionWithAI = async () => {
     setIsGenerating(true);
@@ -90,7 +69,6 @@ function Form() {
       });
 
       const description = response.data.choices[0].message.content;
-      //const description = "dummy ses"
       handleInputChange("description", description);
     } catch (error) {
       console.error("Error generating description:", error);
@@ -101,8 +79,7 @@ function Form() {
   const handleImageChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      setIsUploading(true); // Start uploading
-      // Upload image to Cloudinary
+      setIsUploading(true);
       const formData = new FormData();
       formData.append("file", file);
       formData.append("upload_preset", "ry2mqe7j");
@@ -116,11 +93,11 @@ function Form() {
         );
         const data = await response.json();
         const imageUrl = data.secure_url;
-        handleInputChange("image", imageUrl); // Set the image URL in the form data
+        handleInputChange("image", imageUrl);
       } catch (error) {
         console.error("Error uploading image:", error);
       } finally {
-        setIsUploading(false); // Finished uploading
+        setIsUploading(false);
       }
     }
   };
@@ -262,21 +239,17 @@ function Form() {
   };
   const handleDateTimeChange = (e) => {
     const inputDate = e.target.value;
-    // const formattedDate = inputDate + ":00.000Z";
     handleInputChange("eventDate", inputDate);
   };
-  const toast = useToast(); // Initialize useToast hook
+  const toast = useToast();
+  const handleGoBack = () => {
+    window.history.back();
+  };
 
   return (
     <Box bg="black" p={4}>
       <Flex p={45}>
-        <Box
-          w="30%"
-          p={35}
-          bg="#131313"
-          // borderRadius="xl"
-          borderRadius=" 35px 0  0 35px"
-        >
+        <Box w="30%" p={35} bg="#131313" borderRadius=" 35px 0  0 35px">
           <Box bg="gray" w={29} h={31}>
             <Icon as={SiEventstore} h={5} w={6} color="white" mr="8px" m={1} />
           </Box>
@@ -387,7 +360,13 @@ function Form() {
                       </Box>
                     )}
                   </FormControl>
-                  <Button type="submit" bg="white" mr={3}>
+
+                  <Button
+                    type="submit"
+                    bg="white"
+                    mr={3}
+                    onClick={handleGoBack}
+                  >
                     Back
                   </Button>
                   <Button type="submit" bg="white" disabled={isUploading}>
