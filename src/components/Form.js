@@ -51,7 +51,6 @@ const Form = () => {
 
   const { user, isAuthenticated, isLoading } = useAuth0();
 
-  const toast = useToast(); // Initialize useToast hook
   const [desc, setDesc] = useState("");
   const [formData, setFormData] = useState({
     eventName: "",
