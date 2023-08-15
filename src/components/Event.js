@@ -70,6 +70,33 @@ function Event() {
     window.history.back();
   };
 
+  const formatDate = (date) => {
+    const originalDate = new Date(date);
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    const month = months[originalDate.getMonth()];
+    const day = originalDate.getDate();
+    const hour = originalDate.getHours() % 12 || 12;
+    const minute = originalDate.getMinutes();
+    const ampm = originalDate.getHours() < 12 ? "AM" : "PM";
+    const formattedDate = `${month} ${day}, ${hour}.${minute
+      .toString()
+      .padStart(2, "0")} ${ampm}`;
+    return formattedDate;
+  };
+
   return (
     <Box bg="black!important">
       <Box px="24px" py="16px" bg="#0e2323">
@@ -123,9 +150,7 @@ function Event() {
                   <Text mb={1}>
                     Venue: <b>{node.venue}</b>
                   </Text>
-                  <Text mb={1}>
-                    Event Date: <b>{node.eventDate}</b>
-                  </Text>
+                  <Text mb={1}>Event Date: {formatDate(node.eventDate)}</Text>
                   <Text mb={1}>
                     Published AT: <b>{node.createdAt}</b>
                   </Text>

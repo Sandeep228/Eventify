@@ -47,7 +47,7 @@ const Form = () => {
     listening,
     resetTranscript,
     browserSupportsSpeechRecognition,
-  } = useSpeechRecognition();
+  } = useSpeechRecognition({ continuous: true });
 
   const { user, isAuthenticated, isLoading } = useAuth0();
 
@@ -342,7 +342,7 @@ const Form = () => {
                   </FormControl>
                   <HStack>
                     <Text color="white">
-                      <i> Microphone: {listening ? "on" : "off"}</i>
+                      <b> Speechly powered Input: {listening ? "on" : "off"}</b>
                     </Text>
                     <Button onClick={SpeechRecognition.startListening}>
                       Start

@@ -63,7 +63,7 @@ function Dashboard() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-api-key":`${process.env.REACT_APP_GRAFBASE_API}`
+          "x-api-key": `${process.env.REACT_APP_GRAFBASE_API}`,
         },
         body: JSON.stringify({
           query: GetUserQuery,
@@ -89,7 +89,7 @@ function Dashboard() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-api-key":`${process.env.REACT_APP_GRAFBASE_API}`
+          "x-api-key": `${process.env.REACT_APP_GRAFBASE_API}`,
         },
         body: JSON.stringify({
           query: userCreate,
