@@ -40,9 +40,9 @@ const themes = [
 ];
 // Add your Cloudinary configuration here
 const cloudinaryConfig = {
-  cloudName: "dndorgct9",
-  apiKey: "967523612336929",
-  apiSecret: "UFUbj4CcHCbBniV8VrDYv6-Q1sI",
+  cloudName: `${process.env.REACT_APP_CLOUDNAME}`,
+  apiKey: `${process.env.REACT_APP_CLOUDINARY_API_KEY}`,
+  apiSecret: `${process.env.REACT_APP_CLOUDINARY_API_SECRET}`,
 };
 const Form=() =>{
   const {
@@ -268,8 +268,9 @@ const Form=() =>{
         duration: 3000,
         isClosable: true,
       });
-    } 
-    //push new event to grafbase
+      event.preventDefault();
+    } else{
+        //push new event to grafbase
     await postEventData(formData, user.email);
     setFormData({
       eventName: "",
@@ -281,6 +282,7 @@ const Form=() =>{
     });
     resetTranscript();
     setDesc("")
+    }
   };
   const handleDateTimeChange = (e) => {
     const inputDate = e.target.value;

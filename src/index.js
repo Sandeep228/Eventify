@@ -5,8 +5,8 @@ import { BrowserRouter } from "react-router-dom";
 import reportWebVitals from "./reportWebVitals";
 import { Auth0Provider } from "@auth0/auth0-react";
 
-let domain = "dev-pkl4wcxhgtnz6ug6.us.auth0.com";
-let clientId = "peUEx2VUs5FEtQiFehkfiUwOT3Ifjd8u";
+let domain = `${process.env.REACT_APP_AUTH_DOMAIN}`;
+let clientId = `${process.env.REACT_APP_CLIENTID}`;
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
