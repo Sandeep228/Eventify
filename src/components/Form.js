@@ -10,13 +10,23 @@ import {
   Textarea,
   Select,
   Button,
+  Flex,
+  Stack,
+  Link,
+  Text,
+  Icon,
+  Heading,
+  VStack,
 } from "@chakra-ui/react";
 import { v4 as uuidv4 } from "uuid";
 import { CloudinaryContext, Image } from "cloudinary-react";
 import { Configuration, OpenAIApi } from "openai";
+import User from "./User";
+import { SiEventstore } from "react-icons/si";
+import { useToast } from "@chakra-ui/react";
 
 const configuration = new Configuration({
-  apiKey: "OPENAI_API",
+  apiKey: "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",
 });
 const openai = new OpenAIApi(configuration);
 
@@ -25,7 +35,6 @@ const themes = [
   { value: "Environmet", label: "Environment" },
   { value: "Technology", label: "Technology" },
   { value: "StudentWelfare", label: "Student Welfare" },
-
 ];
 // Add your Cloudinary configuration here
 const cloudinaryConfig = {
@@ -41,7 +50,7 @@ function Form() {
     description: "",
     theme: "",
     eventDate: "",
-    venue:"",
+    venue: "",
     image: null,
   });
   const [isUploading, setIsUploading] = useState(false);
@@ -77,7 +86,7 @@ function Form() {
       const response = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         messages: [{ role: "user", content: prompt }],
-        max_tokens: 500, // Adjust as needed
+        max_tokens: 50, // Adjust as needed
       });
 
       const description = response.data.choices[0].message.content;
@@ -123,7 +132,7 @@ function Form() {
     }
   }
 `;
-  
+
   const EventCreate = `
   mutation EventCreate($name: String! $description:String! $eventDate:DateTime $publishedAt:DateTime $theme:String $eventUrl:URL $venue:String $host:ID){
     eventCreate(input: {name:$name description:$description eventDate:$eventDate publishedAt: $publishedAt theme:$theme eventUrl:$eventUrl venue: $venue host: {link:$host}}) {
@@ -134,7 +143,7 @@ function Form() {
   }
   `;
 
-  const getUserByEmailID = async(email) => {
+  const getUserByEmailID = async (email) => {
     const response = await fetch(
       "https://eventify-main-pujaagarwal5263.grafbase.app/graphql",
       {
@@ -151,12 +160,11 @@ function Form() {
           },
         }),
       }
-
     );
 
     const result = await response.json();
     return result.data?.user?.id;
-  }
+  };
 
   const dateFormatter = (timestamp) => {
     const date = new Date(timestamp);
@@ -178,13 +186,25 @@ function Form() {
     const name = formData.eventName;
     const description = formData.description;
     const theme = formData.theme;
-    const eventDate = formData.eventDate;
+    const eventDate = formData.eventDate + ":00.000Z";
     const eventUrl = formData.image;
     const venue = formData.venue;
-    const publishedAt = dateFormatter(Date.now())
+    const publishedAt = dateFormatter(Date.now());
     const userID = await getUserByEmailID(email);
-    
-    console.log(name," ",description," ",theme," ",eventDate," ",publishedAt," ",userID)
+
+    console.log(
+      name,
+      " ",
+      description,
+      " ",
+      theme,
+      " ",
+      eventDate,
+      " ",
+      publishedAt,
+      " ",
+      userID
+    );
     const response = await fetch(
       "https://eventify-main-pujaagarwal5263.grafbase.app/graphql",
       {
@@ -204,22 +224,30 @@ function Form() {
             theme: theme,
             eventUrl: eventUrl,
             venue: venue,
-            host: userID
+            host: userID,
           },
         }),
       }
     );
 
     const result = await response.json();
-    if(result.data!=null){
+    if (result.data != null) {
       console.log("event submitted successfully");
-    }else{
+      toast({
+        title: "Form Submitted",
+        description: "Your form has been successfully submitted.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      console.log(result);
       console.log("error in saving event");
     }
     return result;
   };
 
-  const handleSubmit = async(event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     //push new event to grafbase
     await postEventData(formData, user.email);
@@ -228,92 +256,150 @@ function Form() {
       description: "",
       theme: "",
       eventDate: "",
-      venue:"",
+      venue: "",
       image: null,
     });
   };
   const handleDateTimeChange = (e) => {
     const inputDate = e.target.value;
-    const formattedDate = inputDate + ":00.000Z";
-    handleInputChange("eventDate", formattedDate);
+    // const formattedDate = inputDate + ":00.000Z";
+    handleInputChange("eventDate", inputDate);
   };
+  const toast = useToast(); // Initialize useToast hook
+
   return (
-    <ChakraProvider>
-      <Box p={4}>
-        <form onSubmit={handleSubmit}>
-          <FormControl mb={4}>
-            <FormLabel>Name of Event</FormLabel>
-            <Input
-              type="text"
-              value={formData.eventName}
-              onChange={(e) => handleInputChange("eventName", e.target.value)}
-            />
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Description</FormLabel>
-            <Textarea
-              value={formData.description}
-              onChange={(e) => handleInputChange("description", e.target.value)}
-            />
-          </FormControl>
-          <Button
-            type="button"
-            onClick={generateDescriptionWithAI}
-            colorScheme="blue"
-            disabled={isGenerating}
-          >
-            {isGenerating
-              ? "Generating..."
-              : "Auto-generate description with AI"}
-          </Button>
-          <FormControl mb={4}>
-            <FormLabel>Theme</FormLabel>
-            <Select
-              value={formData.theme}
-              onChange={(e) => handleInputChange("theme", e.target.value)}
-            >
-              <option value="">Select a theme</option>
-              {themes.map((theme) => (
-                <option key={theme.value} value={theme.value}>
-                  {theme.label}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Event Venue</FormLabel>
-            <Input
-              type="text"
-              value={formData.venue}
-              onChange={(e) => handleInputChange("venue", e.target.value)}
-            />
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Event Date</FormLabel>
-            <Input
-              type="datetime-local"
-              value={formData.eventDate}
-              onChange={handleDateTimeChange}
-            />
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Image Upload</FormLabel>
-            <Input type="file" accept="image/*" onChange={handleImageChange} />
-            {formData.image && (
-              <Image
-                cloudName={cloudinaryConfig.cloudName}
-                publicId={formData.image}
-                width="100"
-                crop="scale"
-              />
-            )}
-          </FormControl>
-          <Button type="submit" colorScheme="blue" disabled={isUploading}>
-            {isUploading ? "Uploading..." : "Submit"}
-          </Button>
-        </form>
-      </Box>
-    </ChakraProvider>
+    <Box bg="black" p={4}>
+      <Flex p={45}>
+        <Box
+          w="30%"
+          p={35}
+          bg="#131313"
+          // borderRadius="xl"
+          borderRadius=" 35px 0  0 35px"
+        >
+          <Box bg="gray" w={29} h={31}>
+            <Icon as={SiEventstore} h={5} w={6} color="white" mr="8px" m={1} />
+          </Box>
+          <Box mt={200}>
+            <Heading size="xl" ml={63} mb={2} color="white">
+              Eventify
+            </Heading>
+            <Text color="white" ml={63} fontSize={23}>
+              Where AI shapes <br />
+              events at your command
+            </Text>
+          </Box>
+        </Box>
+        <Flex direction="column" w="70%" p={4} bg="#242424">
+          <Stack spacing={4}>
+            <Box pl={100} pt={10}>
+              <Box p={4}>
+                <Heading color="white" pb={4}>
+                  Create Your Event Details
+                </Heading>
+                <form onSubmit={handleSubmit}>
+                  <FormControl mb={4}>
+                    <FormLabel color="white">Name of Event</FormLabel>
+                    <Input
+                      color="white"
+                      type="text"
+                      value={formData.eventName}
+                      onChange={(e) =>
+                        handleInputChange("eventName", e.target.value)
+                      }
+                    />
+                  </FormControl>
+                  <FormControl mb={5}>
+                    <FormLabel color="white">Description</FormLabel>
+                    <Textarea
+                      color="white"
+                      value={formData.description}
+                      onChange={(e) =>
+                        handleInputChange("description", e.target.value)
+                      }
+                    />
+                  </FormControl>
+                  <Button
+                    mb={4}
+                    type="button"
+                    onClick={generateDescriptionWithAI}
+                    bg="white"
+                    disabled={isGenerating}
+                  >
+                    {isGenerating
+                      ? "Generating..."
+                      : "Craft with AI Magic  °☆."}
+                  </Button>
+                  <FormControl mb={4}>
+                    <FormLabel color="white">Theme</FormLabel>
+                    <Select
+                      color="white"
+                      value={formData.theme}
+                      onChange={(e) =>
+                        handleInputChange("theme", e.target.value)
+                      }
+                    >
+                      <option value="">Select a theme</option>
+                      {themes.map((theme) => (
+                        <option key={theme.value} value={theme.value}>
+                          {theme.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl mb={4}>
+                    <FormLabel color="white">Event Venue</FormLabel>
+                    <Input
+                      color="white"
+                      type="text"
+                      value={formData.venue}
+                      onChange={(e) =>
+                        handleInputChange("venue", e.target.value)
+                      }
+                    />
+                  </FormControl>
+                  <FormControl mb={4}>
+                    <FormLabel color="white">Event Date</FormLabel>
+                    <Input
+                      color="white"
+                      type="datetime-local"
+                      value={formData.eventDate}
+                      onChange={handleDateTimeChange}
+                    />
+                  </FormControl>
+                  <FormControl mb={4}>
+                    <FormLabel color="white">Image Upload</FormLabel>
+                    <Input
+                      color="white"
+                      p={1}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                    />
+                    {formData.image && (
+                      <Box mt="12px">
+                        <Image
+                          cloudName={cloudinaryConfig.cloudName}
+                          publicId={formData.image}
+                          width="100"
+                          crop="scale"
+                        />
+                      </Box>
+                    )}
+                  </FormControl>
+                  <Button type="submit" bg="white" mr={3}>
+                    Back
+                  </Button>
+                  <Button type="submit" bg="white" disabled={isUploading}>
+                    {isUploading ? "Uploading..." : "Submit"}
+                  </Button>
+                </form>
+              </Box>
+            </Box>
+          </Stack>
+        </Flex>
+      </Flex>
+    </Box>
   );
 }
 export default Form;

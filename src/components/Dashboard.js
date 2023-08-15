@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Text,
@@ -30,11 +30,11 @@ function Dashboard() {
     });
   };
 
-  const getMyEvents = () =>{
-    navigate("/myevents",{
+  const getMyEvents = () => {
+    navigate("/myevents", {
       replace: true,
-    })
-  }
+    });
+  };
 
   const GetUserQuery = `
   query User($email: Email!) {
@@ -44,7 +44,7 @@ function Dashboard() {
   }
 `;
 
- const userCreate = `
+  const userCreate = `
  mutation UserCreate($name: String! $email: Email! $profileUrl: URL!){
   userCreate(input: {name:$name email:$email profileUrl:$profileUrl}) {
     user {
@@ -54,7 +54,7 @@ function Dashboard() {
  }
  `;
 
-  const getUserByEmailID = async(email) => {
+  const getUserByEmailID = async (email) => {
     const response = await fetch(
       "https://eventify-main-pujaagarwal5263.grafbase.app/graphql",
       {
@@ -71,14 +71,13 @@ function Dashboard() {
           },
         }),
       }
-
     );
 
     const result = await response.json();
     return result.data?.user;
-  }
+  };
 
-  const postNewUser= async(user)=>{
+  const postNewUser = async (user) => {
     const username = user.name;
     const email = user.email;
     const profileUrl = user.picture;
@@ -97,7 +96,7 @@ function Dashboard() {
           variables: {
             name: username,
             email: email,
-            profileUrl: profileUrl
+            profileUrl: profileUrl,
           },
         }),
       }
@@ -105,25 +104,25 @@ function Dashboard() {
 
     const result = await response.json();
     return result;
-  }
+  };
 
   useEffect(() => {
-    const fetchData = async()=>{
+    const fetchData = async () => {
       if (isAuthenticated && user !== undefined) {
         // Perform your actions here
         console.log("User is authenticated:", user);
-        const hasUsers = await getUserByEmailID(user.email)
-        console.log("has users --",hasUsers)
-        if(hasUsers==null){
+        const hasUsers = await getUserByEmailID(user.email);
+        console.log("has users --", hasUsers);
+        if (hasUsers == null) {
           const userPosted = await postNewUser(user);
-          if(userPosted.data != null){
+          if (userPosted.data != null) {
             console.log("user posted successfully");
-          }else{
-            console.log("could not post user",userPosted)
+          } else {
+            console.log("could not post user", userPosted);
           }
         }
       }
-    }
+    };
     fetchData();
   }, [isAuthenticated, user]);
 
@@ -150,12 +149,12 @@ function Dashboard() {
         </Box>
       </Box>
       <Flex>
-        <Box w="20%" h="110vh" p={71} bg="blue.700">
+        <Box w="20%" h="110vh" p={71} bg="gray.900">
           <Stack spacing={7}>
             <Link
               href="#"
               //  onClick={handleClick}
-              color="teal.500"
+              color="#316149"
               fontWeight="bold"
               _hover={{ textDecoration: "none" }}
               _focus={{ outline: "none" }}
@@ -167,7 +166,7 @@ function Dashboard() {
             <Link
               href="#"
               // onClick={handleClick1}
-              color="teal"
+              color="#316149"
               fontWeight="bold"
               _hover={{ textDecoration: "none" }}
               _focus={{ outline: "none" }}
@@ -178,7 +177,7 @@ function Dashboard() {
             </Link>
             <Link
               href="#"
-              color="teal"
+              color="#306048"
               fontWeight="bold"
               _hover={{ textDecoration: "none" }}
               _focus={{ outline: "none" }}
@@ -191,7 +190,7 @@ function Dashboard() {
             <Button onClick={getMyEvents}>My Events</Button>
           </Stack>
         </Box>
-        <Flex direction="column" w="90%" p={4} bg="red.100">
+        <Flex direction="column" w="90%" p={4} bg="black">
           <Stack spacing={4}>
             <User />
           </Stack>
