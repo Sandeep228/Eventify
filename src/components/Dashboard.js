@@ -162,9 +162,9 @@ function Dashboard() {
               <Heading size="xl" mb={2} color="white">
                 Eventify
               </Heading>
-              <Text color="white" fontSize={29}>
-                Where AI shapes <br />
-                events at your command
+              <Text color="white" fontSize={25}>
+                Elevating Experiences, <br /> Amplifying Impact, <br />
+                Guided by AI.
               </Text>
             </Box>
 
