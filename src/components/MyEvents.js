@@ -185,7 +185,22 @@ const MyEvents = () => {
       console.log("error in saving event");
     }
   };
-  console.log(data);
+  const formatDate = (date) =>{
+    const originalDate = new Date(date);
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    
+    const month = months[originalDate.getMonth()];
+    const day = originalDate.getDate();
+    const hour = originalDate.getHours() % 12 || 12;
+    const minute = originalDate.getMinutes();
+    const ampm = originalDate.getHours() < 12 ? 'AM' : 'PM';
+    
+    const formattedDate = `${month} ${day}, ${hour}.${minute.toString().padStart(2, '0')} ${ampm}`;
+    return formattedDate
+  }
 
   return (
     <Box bg="black!important">
@@ -228,7 +243,7 @@ const MyEvents = () => {
                     {node.name}
                   </Heading>
                   <Text mb={2}>{node.description}</Text>
-                  <Text mb={1}>Event Date: {node.eventDate}</Text>
+                  <Text mb={1}>Event Date: {formatDate(node.eventDate)}</Text>
                   <Text mb={1}>Theme: {node.theme}</Text>
                   <Text mb={1}>Location: {node.venue}</Text>
                   <Button onClick={() => editEventID(node.id)} mr={4}>

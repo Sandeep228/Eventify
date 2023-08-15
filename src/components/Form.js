@@ -17,6 +17,7 @@ import {
   Icon,
   Heading,
   VStack,
+  HStack,
 } from "@chakra-ui/react";
 import { v4 as uuidv4 } from "uuid";
 import { CloudinaryContext, Image } from "cloudinary-react";
@@ -24,9 +25,10 @@ import { Configuration, OpenAIApi } from "openai";
 import User from "./User";
 import { SiEventstore } from "react-icons/si";
 import { useToast } from "@chakra-ui/react";
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: `${process.env.REACT_APP_OPENAI_API_KEY}`,
 });
 const openai = new OpenAIApi(configuration);
 
@@ -42,9 +44,19 @@ const cloudinaryConfig = {
   apiKey: "967523612336929",
   apiSecret: "UFUbj4CcHCbBniV8VrDYv6-Q1sI",
 };
-function Form() {
-  const { user, isAuthenticated, isLoading } = useAuth0();
+const Form=() =>{
+  const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition
+  } = useSpeechRecognition();
 
+
+  const { user, isAuthenticated, isLoading } = useAuth0();
+  
+  const toast = useToast(); // Initialize useToast hook
+  const [desc,setDesc] = useState("");
   const [formData, setFormData] = useState({
     eventName: "",
     description: "",
@@ -105,7 +117,7 @@ function Form() {
       // Upload image to Cloudinary
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("upload_preset", "ry2mqe7j");
+      formData.append("upload_preset", `${process.env.REACT_APP_UPLOAD_PRESET}`);
       try {
         const response = await fetch(
           `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/image/upload`,
@@ -211,8 +223,7 @@ function Form() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-api-key":
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTE3NzcyNjYsImlzcyI6ImdyYWZiYXNlIiwiYXVkIjoiMDFIN0pXR1gwUjVNN0ZQUjkzV1pNQUtGMzgiLCJqdGkiOiIwMUg3SldHWDhRNVlWTVc1RkI0RDJFQ1dTUiIsImVudiI6InByb2R1Y3Rpb24iLCJwdXJwb3NlIjoicHJvamVjdC1hcGkta2V5In0.CnKts9fBm59UJw5enBJIgrXAIhLqvK_CGchRa--qw-Y",
+          "x-api-key":`${process.env.REACT_APP_GRAFBASE_API}`,
         },
         body: JSON.stringify({
           query: EventCreate,
@@ -249,6 +260,15 @@ function Form() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if(formData.eventName=="" || formData.description=="" || formData.theme=="" || formData.eventDate=="" || formData.venue=="" || formData.image==null){
+      toast({
+        title: "Error",
+        description: "Please submit all the fields",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } 
     //push new event to grafbase
     await postEventData(formData, user.email);
     setFormData({
@@ -259,13 +279,25 @@ function Form() {
       venue: "",
       image: null,
     });
+    resetTranscript();
+    setDesc("")
   };
   const handleDateTimeChange = (e) => {
     const inputDate = e.target.value;
     // const formattedDate = inputDate + ":00.000Z";
     handleInputChange("eventDate", inputDate);
   };
-  const toast = useToast(); // Initialize useToast hook
+
+  const setDescription = ()=>{
+    setDesc("transcript")
+    if(transcript!=""){
+      handleInputChange("description", transcript);
+    }
+  }
+
+  const clearTranscript = () =>{
+    resetTranscript()
+  }
 
   return (
     <Box bg="black" p={4}>
@@ -307,18 +339,29 @@ function Form() {
                       onChange={(e) =>
                         handleInputChange("eventName", e.target.value)
                       }
+                      
                     />
                   </FormControl>
                   <FormControl mb={5}>
                     <FormLabel color="white">Description</FormLabel>
                     <Textarea
                       color="white"
-                      value={formData.description}
+                      value={transcript!="" ? transcript : formData.description}
                       onChange={(e) =>
                         handleInputChange("description", e.target.value)
                       }
+                      
                     />
                   </FormControl>
+      <HStack>         
+      <Text color="white"><i> Microphone: {listening ? 'on' : 'off'}</i></Text>
+      <Button onClick={SpeechRecognition.startListening}>Start</Button>
+      <Button onClick={SpeechRecognition.stopListening}>Stop</Button>
+      <Button onClick={clearTranscript}>Clear</Button>
+      <Button onClick={setDescription}>{desc==""? 'Not Saved' : 'Saved'}</Button>
+
+      </HStack>
+      <br />
                   <Button
                     mb={4}
                     type="button"
@@ -338,6 +381,7 @@ function Form() {
                       onChange={(e) =>
                         handleInputChange("theme", e.target.value)
                       }
+                      
                     >
                       <option value="">Select a theme</option>
                       {themes.map((theme) => (
@@ -356,6 +400,7 @@ function Form() {
                       onChange={(e) =>
                         handleInputChange("venue", e.target.value)
                       }
+                      
                     />
                   </FormControl>
                   <FormControl mb={4}>
@@ -365,6 +410,7 @@ function Form() {
                       type="datetime-local"
                       value={formData.eventDate}
                       onChange={handleDateTimeChange}
+                      
                     />
                   </FormControl>
                   <FormControl mb={4}>
@@ -375,6 +421,7 @@ function Form() {
                       type="file"
                       accept="image/*"
                       onChange={handleImageChange}
+                      
                     />
                     {formData.image && (
                       <Box mt="12px">
