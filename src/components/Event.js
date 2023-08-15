@@ -152,7 +152,7 @@ function Event() {
                   </Text>
                   <Text mb={1}>Event Date: {formatDate(node.eventDate)}</Text>
                   <Text mb={1}>
-                    Published AT: <b>{node.createdAt}</b>
+                    Published AT: <b>{formatDate(node.createdAt)}</b>
                   </Text>
                 </Box>
               ))}
