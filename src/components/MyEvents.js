@@ -183,6 +183,34 @@ const MyEvents = () => {
       console.log("error in saving event");
     }
   };
+  const formatDate = (date) => {
+    const originalDate = new Date(date);
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    const month = months[originalDate.getMonth()];
+    const day = originalDate.getDate();
+    const hour = originalDate.getHours() % 12 || 12;
+    const minute = originalDate.getMinutes();
+    const ampm = originalDate.getHours() < 12 ? "AM" : "PM";
+
+    const formattedDate = `${month} ${day}, ${hour}.${minute
+      .toString()
+      .padStart(2, "0")} ${ampm}`;
+    return formattedDate;
+  };
 
   return (
     <Box bg="black!important">
