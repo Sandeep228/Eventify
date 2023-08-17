@@ -22,6 +22,8 @@ npm start
 ```sh
 npm run test
 ```
+## Blog 
+[Blog](https://freakycoders.hashnode.dev/eventify-ai)
 
 ## Author
 
